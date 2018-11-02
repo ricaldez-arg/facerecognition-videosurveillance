@@ -1,0 +1,2 @@
+from deteccion_widget import DetectionWidget
+from stream_layout import StreamLayout

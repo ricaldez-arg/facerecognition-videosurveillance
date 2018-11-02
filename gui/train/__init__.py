@@ -1,0 +1,3 @@
+from video_layout import VideoLayout
+from capture_widget import CaptureWidget
+from train_layout import TrainLayout
