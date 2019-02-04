@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/DeteccionReconocimientoSeguridadDomiciliaria.iml" filepath="$PROJECT_DIR$/.idea/DeteccionReconocimientoSeguridadDomiciliaria.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/DetectRecongnizingVideoSurveillance.iml" filepath="$PROJECT_DIR$/.idea/DetectRecongnizingVideoSurveillance.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../moduloseguridad-ejemplos/.idea/moduloseguridad-ejemplos.iml" filepath="$PROJECT_DIR$/../moduloseguridad-ejemplos/.idea/moduloseguridad-ejemplos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../PyQtGUIsamples/.idea/PyQtGUIsamples.iml" filepath="$PROJECT_DIR$/../PyQtGUIsamples/.idea/PyQtGUIsamples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/deteccion_reconocimiento_videovigilancia.iml" filepath="$PROJECT_DIR$/.idea/deteccion_reconocimiento_videovigilancia.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../operaciones_video/.idea/operaciones_video.iml" filepath="$PROJECT_DIR$/../operaciones_video/.idea/operaciones_video.iml" />
     </modules>
   </component>
 </project>

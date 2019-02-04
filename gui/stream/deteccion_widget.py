@@ -1,7 +1,6 @@
 from PyQt4 import QtGui
 import numpy as np
 import cv2
-
 class DetectionWidget(QtGui.QWidget):
     def __init__(self, procesador, parent=None):
         super(DetectionWidget,self).__init__(parent)
@@ -11,17 +10,20 @@ class DetectionWidget(QtGui.QWidget):
         self._width = 2
         self._min_size = (30, 30)
         self.starting = True
+        self.cont = 0
 
     def detect(self, img = np.ndarray):
-        return self.procesador.procesar(img)
+        imagen = self.procesador.procesar(img)
+        return imagen
 
     def image_data_slot(self, image_data):
         if self.starting:
             image_data = self.detect(image_data)
-
+            #image_data = imutils.resize(image_data, width=720)
             self.image = self.get_qimage(image_data)
             if self.image.size() != self.size():
                 self.setFixedSize(self.image.size())
+                a = 0
 
             self.update()
 

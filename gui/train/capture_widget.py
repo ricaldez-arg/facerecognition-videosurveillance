@@ -1,7 +1,10 @@
 from PyQt4 import QtGui
-from Reconocimiento.Generador import Generador
-import numpy as np
+
 import cv2
+import numpy as np
+
+from deteccion_reconocimiento import Generador
+
 
 class CaptureWidget(QtGui.QWidget):
 
@@ -13,33 +16,33 @@ class CaptureWidget(QtGui.QWidget):
         self.classifier = cv2.CascadeClassifier(cascade_path)
         self.image = QtGui.QImage()
         self._red = (0, 0, 255)
+        self._green = (0, 255, 0)
+        self._blue = (255,0 ,0)
+
         self._width = 2
-        self._min_size = (30, 30)
         self.capt = False
         self.starting = True
 
     def detect_faces(self, image= np.ndarray):
-        #haarclassifiers work better in black and white
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         gray_image = cv2.equalizeHist(gray_image)
 
         faces = self.classifier.detectMultiScale(gray_image,
-                                                 scaleFactor=1.3,
-                                                 minNeighbors=4,
-                                                 flags=cv2.CASCADE_SCALE_IMAGE,
-                                                 minSize=self._min_size)
+                                                 scaleFactor=1.1,
+                                                 minNeighbors=3)
+                                                 #flags=cv2.CASCADE_SCALE_IMAGE)
 
         return faces
 
 
-    def image_data_slot(self, image_data, nombre = ""):
+    def image_data_slot(self, image_data):
         if self.starting:
             faces = self.detect_faces(image_data)
             for (x, y, w, h) in faces:
                 cv2.rectangle(image_data,
                               (x, y),
                               (x+w, y+h),
-                              self._red,
+                              self._green,
                               self._width)
             if self.capt:
                 for (x,y,w,h) in faces:

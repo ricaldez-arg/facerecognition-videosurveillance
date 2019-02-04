@@ -1,73 +1,75 @@
-from imutils.video import VideoStream
-from DeteccionMovimiento import DetectorMovimiento
-from DeteccionPersona import DetectorRostro
-import numpy as np
+#!/usr/bin/env python
+import argparse
+
 import cv2
 import imutils
+from deteccion_reconocimiento import *
+from imutils.video import VideoStream
 
-fuente = 0
+from deteccion_reconocimiento.notificador import GestionAlarma
+from deteccion_reconocimiento.procesador import Procesador
+from deteccion_reconocimiento.reconocimiento import ReconocedorPersona
 
-#src = 'rtsp://admin:Password@192.168.43.108/Streaming/channels/2'
-#src='rtsp://admin:Password@192.168.43.108/doc/page/playback.asp'
-src='rtsp://admin:Password@192.168.1.64/doc/page/preview.asp'
-#src =0
-#camara = VideoStream(src).start()
-camara = cv2.VideoCapture(src)
-detectorM = DetectorMovimiento()
-detectorR = DetectorRostro()
+import time
+def init(camara, procesador,args):
+    tiempo_actual = lambda: int(round(time.time() * 1000))
+    iniciot = tiempo_actual()
+    datos = []
+    while True:
+        try:
 
-def dibujaRectangulo(puntos, img):
-    for (x,y,w,h) in puntos:
-        cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+            img = camara.read()
+            if img is None:
+                break
+            img = imutils.resize(img, width=720)
+            print img.shape[0]
+            print img.shape[1]
 
-def dibujaRectangulo2(pts_cds, img):
+            fint = tiempo_actual()
+            if (fint - iniciot) > 35000:
+                print datos
+                pass
+            inicio = tiempo_actual()
 
-    if len(pts_cds)>0:
-        for (pts, cds) in pts_cds:
-            for (x,y,w,h) in pts:
-                cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+            img = procesador.procesar(img)
 
-writer = None
-output='outputVideo.avi'
-while True:
-    ret, img = camara.read()
-    #img = camara.read()
-    img = imutils.resize(img, width=720)
-    puntos, cuadros = detectorM.detectar(img)
+            fin = tiempo_actual()
+            tiempo_empleado = fin - inicio
+            datos.append(tiempo_empleado)
 
-    #dibujarRectangulo = lambda (x,y,w,h): cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
-    #mostrador = lambda cuadro:cv2.imshow("detect2",cuadro)
-    #map(mostrador, cuadros)
-    #map(dibujarRectangulo, puntos)
-    #[dibujarRectangulo(x) for x in puntos]
-    #[cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2) for (x,y,w,h) in puntos]
-    dibujaRectangulo(puntos, img)
+            if args["mostrar"] > 0:
+                cv2.imshow("LIVE STREAM", img)
+                key = cv2.waitKey(1000) & 0xFF
+                if key == ord("q"):
+                    break
+        except KeyboardInterrupt:
+            break
 
-    #for cuadro in cuadros:
-    #    pts, cds = detectorR.detectar(cuadro)
-    '''if len(cuadros) > 0:
-        cc = detectorR.detectar(cuadros[0])
-    '''
-    #pts_cds = [detectorR.detectar(cuadro) for cuadro in cuadros if len(cuadro) > 0]
-    pts_cds = detectorR.detectar(img)
-    dibujaRectangulo2([pts_cds],img)
-    #dibujaRectangulo2(pts_cds,img)
+    cv2.destroyAllWindows()
+    camara.stop()
+    #camara.release()
 
+if __name__ == '__main__':
+    ap = argparse.ArgumentParser()
+    src = 0
+    #src = '../moduloseguridad-ejemplos/video2.avi'
+    ap.add_argument("-f", "--fuente", default=src, help="fuente del video o camara")
+    ap.add_argument("-m", "--mostrar", type=int, default=1, help="muestra si es 1 y no muestra si es 0")
+    args = vars(ap.parse_args())
 
+    src = args['fuente']
+    camara = VideoStream(src).start()
+    #camara = cv2.VideoCapture(src)
 
-    cv2.imshow("detect",img)
+    detectorM = DetectorMovimiento()
+    detectorR = DetectorRostro('./util/haarcascades/haarcascade_frontalface_default.xml')
+    #detectorR = DetectorRostro('./util/haarcascades/haarcascade_profileface.xml')
+    reconocedor = ReconocedorPersona()
+    reconocedor.entrenar('./util/data/')
 
-    if writer is None and output is not None:
-	fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-	writer = cv2.VideoWriter(output, fourcc, 20,
-	(img.shape[1], img.shape[0]), True)
+    gestion_alarma  = GestionAlarma()
+    procesador = Procesador(detectorM=detectorM,detectorR=detectorR,reconocedor=reconocedor,
+                            gestion_alarma=gestion_alarma,output_path='./grabaciones/')#,output_path='./grabaciones/')
 
-    if writer is not None:
-	writer.write(img)
+    init(camara,procesador,args)
 
-    if cv2.waitKey(1)& 0xff == ord('q'):
-        break
-if writer is not None:
-	writer.release()
-camara.release()
-cv2.destroyAllWindows()

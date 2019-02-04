@@ -1,14 +1,11 @@
 from PyQt4 import QtGui
 from capture_widget import CaptureWidget
-from gui.record_video import RecordVideo
 
 class VideoLayout(QtGui.QVBoxLayout):
     def __init__(self, recorder, data_path, cascade_path, parent=None):
         super(VideoLayout, self).__init__()
         self.capture_widget = CaptureWidget(data_path, cascade_path)
 
-        # TODO: set video port
-        #self.record_video = RecordVideo()
         self.record_video = recorder
 
         image_data_slot = self.capture_widget.image_data_slot
@@ -17,7 +14,7 @@ class VideoLayout(QtGui.QVBoxLayout):
         #layout = QtGui.QVBoxLayout()
 
         # layout.addWidget(self.face_detection_widget)
-        self.run_button = QtGui.QPushButton('Start Live')
+        #self.run_button = QtGui.QPushButton('Start Live')
         #self.start = False
         #self.addWidget(self.run_button)
         self.addWidget(self.capture_widget)
@@ -33,11 +30,11 @@ class VideoLayout(QtGui.QVBoxLayout):
         if self.start:
             self.record_video.stop_recording()
             self.start = not self.start
-            self.run_button.setText('Start live')
+            #self.run_button.setText('Start live')
         else:
             self.record_video.start_recording()
             self.start = not self.start
-            self.run_button.setText('Stop live')
+            #self.run_button.setText('Stop live')
 
     def start(self):
         self.capture_widget.start()

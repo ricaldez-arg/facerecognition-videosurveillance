@@ -1,0 +1,5 @@
+nombre,fuente,descripcion
+Camara web integrada,0,
+Camara web usb,1,
+Camara IP HIKVISION (inalambrico),rtsp://admin:Password@192.168.43.108/,
+Camara IP HIKVISION (cableado),rtsp://admin:Password@192.168.1.64/,
